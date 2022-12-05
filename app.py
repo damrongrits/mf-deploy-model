@@ -1,6 +1,7 @@
 #heroku buildpacks:set heroku/python
 #heroku buildpacks:add --index 1 heroku/jvm
 
+import atexit
 import weka.core.serialization as serialization
 from weka.classifiers import Classifier
 from weka.core.converters import Loader
@@ -12,19 +13,26 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
+
+#@app.before_first_request
+#def start_jvm():
+#    jvm.start()
+#@atexit.register
+#def onend():    
+#    jvm.stop()
 #def before_first_request_func():
 #    os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
 #    jvm.start()
 #    print("Start JVM OK Done")
 #
 #@app.before_first_request(before_first_request_func)
-
+#
 
 @app.route('/')
 def main():
     return render_template('index_weka.html')
 
-@app.route('/predict', methods = ['POST'])
+@app.route('/getPredict', methods = ['POST'])
 def getPredict():
     x1 = request.form['x1']
     x2 = request.form['x2']
@@ -34,11 +42,11 @@ def getPredict():
     x6 = request.form['x6']
 
     #os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
-    jvm.start()
+    jvm.start(system_cp=True)
 
     objects = serialization.read_all("PMj48.model")
     classifier = Classifier(jobject=objects[0])
-    loader = Loader (classname = "weka.core.converters.ArffLoader")
+
     # create attributes
     type_att = Attribute.create_nominal("Type", ["M", "L", "H"])
     num1_att = Attribute.create_numeric("Air temperature [K]")
@@ -56,7 +64,6 @@ def getPredict():
     dataset.add_instance(inst)
 
     predicted = classifier.classify_instance(dataset[0])
-
     jvm.stop()
 
     if (predicted==0.0):

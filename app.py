@@ -5,11 +5,19 @@ import weka.core.serialization as serialization
 from weka.classifiers import Classifier
 from weka.core.converters import Loader
 from weka.core.dataset import Attribute, Instance, Instances
-
+import weka.core.jvm as jvm
 import os;
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
+
+@app.before_request
+def before_request_func():
+    if (jvm.started):
+        print("Kill JVM  !!")
+        jvm.stop()
+    else:
+        print("JVM ALready Running")
 
 @app.route('/')
 def main():
@@ -25,7 +33,6 @@ def getPredict():
     x6 = request.form['x6']
 
     #os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
-    import weka.core.jvm as jvm
     if (jvm.started):
         print("JVM Already OK")
     else:
@@ -67,11 +74,12 @@ def getPredict():
         "Predicted (MF)":output
     }
 
-    if (jvm.started):
-        jvm.stop()
+    #if (jvm.started):
+    #    print("JVM STOP !!")
+    #    jvm.stop()
 
     return render_template('index_weka.html', prediction_text = result)
     #return render_template('index_weka.html', prediction_text = f'Predicted (MF): {output}')
 
 if __name__ == '__main__':
-    app.run(debug = True)
+    app.run(debug = True, threaded=True)

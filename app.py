@@ -11,13 +11,14 @@ from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
-@app.before_request
-def before_request_func():
-    if (jvm.started):
-        print("Kill JVM  !!")
-        jvm.stop()
-    else:
-        print("JVM ALready Running")
+#@app.before_request
+#def before_request_func():
+#    if (jvm.started):
+#        print("Kill JVM  !!")
+#        jvm.stop()
+#    else:
+#        jvm.start(system_cp=True)
+#        print("JVM ALready Running")
 
 @app.route('/')
 def main():

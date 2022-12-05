@@ -7,6 +7,9 @@ from weka.core.converters import Loader, Saver
 from weka.core.dataset import Attribute, Instance, Instances
 import os;
 import weka.core.jvm as jvm
+#export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
+os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
+jvm.start()
 
 app = Flask(__name__)
 
@@ -30,9 +33,7 @@ def prediction():
         x6 = X['Tool wear [min]']
 
 
-        #export JAVA_HOME="/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
-        os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
-        jvm.start()
+        
         objects = serialization.read_all("PMj48.model")
         classifier = Classifier(jobject=objects[0])
         loader = Loader (classname = "weka.core.converters.ArffLoader")
@@ -54,7 +55,7 @@ def prediction():
         dataset.add_instance(inst)
 
         predicted = classifier.classify_instance(dataset[0])
-        jvm.stop()
+        #jvm.stop()
         return  str(predicted)
 
 if __name__ == '__main__':

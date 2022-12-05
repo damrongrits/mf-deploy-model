@@ -6,10 +6,18 @@ from weka.classifiers import Classifier
 from weka.core.converters import Loader
 from weka.core.dataset import Attribute, Instance, Instances
 import weka.core.jvm as jvm
+import os;
 
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
+
+#def before_first_request_func():
+#    os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
+#    jvm.start()
+#    print("Start JVM OK Done")
+#
+#@app.before_first_request(before_first_request_func)
 
 
 @app.route('/')
@@ -27,6 +35,7 @@ def getPredict():
 
     #os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
     jvm.start()
+
     objects = serialization.read_all("PMj48.model")
     classifier = Classifier(jobject=objects[0])
     loader = Loader (classname = "weka.core.converters.ArffLoader")
@@ -48,12 +57,24 @@ def getPredict():
 
     predicted = classifier.classify_instance(dataset[0])
 
+    jvm.stop()
+
     if (predicted==0.0):
         output="Normal"
     else:
         output="Failure"
-    jvm.stop()
-    return render_template('index_weka.html', prediction_text = f'Predicted (MF): {output}')
+
+    result = {
+        "Type":x1,
+        "Air temperature [K]":x2,
+        "Process temperature [K]":x3,
+        "Rotational speed [rpm]":x4,
+        "Torque [Nm]":x5,
+        "Tool wear [min]":x6,
+        "Predicted (MF)":output
+    }
+    return render_template('index_weka.html', prediction_text = result)
+    #return render_template('index_weka.html', prediction_text = f'Predicted (MF): {output}')
 
 if __name__ == '__main__':
     app.run(debug = True)

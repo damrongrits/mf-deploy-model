@@ -1,7 +1,6 @@
 #heroku buildpacks:set heroku/python
 #heroku buildpacks:add --index 1 heroku/jvm
 
-import atexit
 import weka.core.serialization as serialization
 from weka.classifiers import Classifier
 from weka.core.converters import Loader
@@ -12,21 +11,6 @@ import os;
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
-
-
-#@app.before_first_request
-#def start_jvm():
-#    jvm.start()
-#@atexit.register
-#def onend():    
-#    jvm.stop()
-#def before_first_request_func():
-#    os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
-#    jvm.start()
-#    print("Start JVM OK Done")
-#
-#@app.before_first_request(before_first_request_func)
-#
 
 @app.route('/')
 def main():
@@ -42,7 +26,10 @@ def getPredict():
     x6 = request.form['x6']
 
     #os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
-    jvm.start(system_cp=True)
+    if (jvm.started):
+        print("JVM Already OK")
+    else:
+        jvm.start(system_cp=True)
 
     objects = serialization.read_all("PMj48.model")
     classifier = Classifier(jobject=objects[0])

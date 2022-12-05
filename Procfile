@@ -1,1 +1,1 @@
-web: gunicorn app:app_weka
+web: gunicorn app:app

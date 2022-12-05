@@ -5,9 +5,8 @@ import weka.core.serialization as serialization
 from weka.classifiers import Classifier
 from weka.core.converters import Loader
 from weka.core.dataset import Attribute, Instance, Instances
-import weka.core.jvm as jvm
-import os;
 
+import os;
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
@@ -26,6 +25,7 @@ def getPredict():
     x6 = request.form['x6']
 
     #os.environ["JAVA_HOME"] = "/Library/Java/JavaVirtualMachines/jdk-11.0.10.jdk/Contents/Home"
+    import weka.core.jvm as jvm
     if (jvm.started):
         print("JVM Already OK")
     else:
@@ -52,9 +52,6 @@ def getPredict():
 
     predicted = classifier.classify_instance(dataset[0])
 
-    if (jvm.started):
-        jvm.stop()
-
     if (predicted==0.0):
         output="Normal"
     else:
@@ -69,6 +66,10 @@ def getPredict():
         "Tool wear [min]":x6,
         "Predicted (MF)":output
     }
+
+    if (jvm.started):
+        jvm.stop()
+
     return render_template('index_weka.html', prediction_text = result)
     #return render_template('index_weka.html', prediction_text = f'Predicted (MF): {output}')
 

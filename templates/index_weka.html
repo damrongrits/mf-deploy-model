@@ -1,0 +1,49 @@
+<body>
+    <div class="container">
+      <form action="{{url_for('getPredict')}}" method="POST">
+        <h1 style="color:DodgerBlue;">Model Result</h1>
+        <p>Input variables in model</p>
+        <hr>
+        
+        <label for="value"><b>Type</b></label>
+        <select name="x1" id="value">
+            <option value="0">M</option>
+            <option value="1">L</option>
+            <option value="2">H</option>
+        </select>
+        <br>
+        <br>
+        <label for="value"><b>Air temperature [K]</b></label>
+        <input type="range" id="value" name="x2" min="295.3" max="304.5" value="300" oninput="this.nextElementSibling.value = this.value">
+        <output>300</output>
+        
+        <br>
+        <br>
+        <label for="value"><b>Process temperature [K]</b></label>
+        <input type="range" id="value" name="x3" min="305.7" max="313.8" value="310" oninput="this.nextElementSibling.value = this.value">
+        <output>310</output>
+        <br>
+        <br>
+        <label for="value"><b>Rotational speed [rpm]</b></label>
+        <input type="range" id="value" name="x4" min="1168" max="2886" value="1500" oninput="this.nextElementSibling.value = this.value">
+        <output>1500</output>
+        <br>
+        <br>
+        <label for="value"><b>Torque [Nm]</b></label>
+        <input type="range" id="value" name="x5" min="3.8" max="76.6" value="40" oninput="this.nextElementSibling.value = this.value">
+        <output>40</output>
+        <br>
+        <br>
+        <label for="value"><b>Tool wear [min]</b></label>
+        <input type="range" id="value" name="x6" min="0" max="253" value="100" oninput="this.nextElementSibling.value = this.value">
+        <output>100</output>
+        <br>
+        <br>
+        <button type="submit" class="predictbtn">Get prediction</button>
+      </form>
+  
+      <br>
+      <br>
+      <h1 style="color:IndianRed;">{{prediction_text}}</h1>
+    </div>
+  </body>

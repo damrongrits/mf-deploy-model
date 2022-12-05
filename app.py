@@ -51,7 +51,9 @@ def getPredict():
     dataset.add_instance(inst)
 
     predicted = classifier.classify_instance(dataset[0])
-    jvm.stop()
+
+    if (jvm.started):
+        jvm.stop()
 
     if (predicted==0.0):
         output="Normal"
